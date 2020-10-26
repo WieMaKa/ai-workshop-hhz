@@ -1,4 +1,4 @@
-## How can I create a new deployment space?
+## How can I create a new deployment space and retrieve the space ID?
 
 - Select _View all spaces_ in the menu
 ![](./screenshots/1.png)
