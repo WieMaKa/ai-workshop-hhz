@@ -6,7 +6,7 @@ This folder contains guidelines that walk you through common tasks needed to com
 
 - [How can I access Watson Studio?](./access-watson-studio)
 - [How can I create a new project?](./create-project)
-- [How can I create a new deployment space?](./create-project)
+- [How can I create a new deployment space?](./create-deployment-space)
 - [How can I create a new notebook?](./create-notebook)
 - [How can I upload data assets to my project?](./upload-assets)
 - [How can I create a Watson Machine Learning service?](./create-machine-learning-service)
