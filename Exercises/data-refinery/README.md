@@ -2,7 +2,7 @@
 
 In this hands-on exercise you will work through similar steps as in the _Titanic Data Preparation_ notebook. You will learn how to use  _Data Refinery_ to cleanse and shape data with a graphical flow editor.
 
-Make sure to consult the referenced (see related links) throughout the tutorial to gain a deeper understanding of the underlying concepts. 
+Make sure to consult the referenced (see related links at the end of this page) throughout the tutorial to gain a deeper understanding of the underlying concepts. 
 
 ## Prerequisites
 - Kaggle Titanic data set (here: `train.csv`) available as _data asset_ in Watson Studio
