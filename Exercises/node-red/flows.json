@@ -1,0 +1,350 @@
+[
+    {
+        "id": "2215a883.0a9278",
+        "type": "tab",
+        "label": "Styles",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "1bad8c04.b1d4c4",
+        "type": "tab",
+        "label": "Tone Analyzer",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "88ed869a.ce4158",
+        "type": "tab",
+        "label": "Translator",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "f48c6960.31ea98",
+        "type": "http in",
+        "z": "1bad8c04.b1d4c4",
+        "name": "",
+        "url": "/api/tone-analyzer",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 150,
+        "y": 120,
+        "wires": [
+            [
+                "77a49005.10dfd"
+            ]
+        ]
+    },
+    {
+        "id": "77a49005.10dfd",
+        "type": "function",
+        "z": "1bad8c04.b1d4c4",
+        "name": "Prepare Request",
+        "func": "msg.payload = msg.req.body.text;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 404.5,
+        "y": 120,
+        "wires": [
+            [
+                "9402f1d8.2b892"
+            ]
+        ]
+    },
+    {
+        "id": "8f472819.4fdab8",
+        "type": "function",
+        "z": "1bad8c04.b1d4c4",
+        "name": "Prepare Response",
+        "func": "msg.payload = msg.response;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 850,
+        "y": 120,
+        "wires": [
+            [
+                "f09a2011.032e9"
+            ]
+        ]
+    },
+    {
+        "id": "f09a2011.032e9",
+        "type": "http response",
+        "z": "1bad8c04.b1d4c4",
+        "name": "Send Response",
+        "statusCode": "200",
+        "headers": {},
+        "x": 1080,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "9402f1d8.2b892",
+        "type": "watson-tone-analyzer-v3",
+        "z": "1bad8c04.b1d4c4",
+        "name": "",
+        "tones": "all",
+        "sentences": "true",
+        "contentType": "false",
+        "tone-method": "generalTone",
+        "interface-version": "2017-09-21",
+        "inputlang": "en",
+        "service-endpoint": "https://gateway-lon.watsonplatform.net/tone-analyzer/api",
+        "x": 620,
+        "y": 120,
+        "wires": [
+            [
+                "8f472819.4fdab8"
+            ]
+        ]
+    },
+    {
+        "id": "4084b448.f82b0c",
+        "type": "http response",
+        "z": "1bad8c04.b1d4c4",
+        "name": "Send Response",
+        "statusCode": "",
+        "headers": {},
+        "x": 660,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "15f59b83.d172f4",
+        "type": "template",
+        "z": "1bad8c04.b1d4c4",
+        "name": "Prepare HTML Markup",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "html",
+        "syntax": "mustache",
+        "template": "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <title>Tone Analyzer</title>\n    <link rel=\"stylesheet\" type=\"text/css\" href=\"https://unpkg.com/carbon-components/css/carbon-components.min.css\" />\n    <link rel=\"stylesheet\" type=\"text/css\" href=\"styles.css\">\n\n    <style type=\"text/css\">\n    </style>\n  </head>\n  <body>\n    <div id='header'>\n        <h1>Tone Analyzer</h1>\n        <h3>Instructions</h3>\n        <ol class=\"bx--list--unordered\">\n            <li class=\"bx--list__item\">Copy or enter text to analyze</li>\n            <li class=\"bx--list__item\">Run analysis</li>\n        </ol>\n    </div>\n    <br></br>    \n    <button id=\"button\" class=\"bx--btn bx--btn--primary\" type=\"button\">\n        Analyze tone\n    </button>\n    <div class=\"main flex\">\n        <div class=\"layout_3\">\n          <h3>Sample Text</h3>\n          <div class=\"bx--form-item\">\n            <label for=\"text-area\" class=\"bx--label\">Input Text</label>\n            <div class=\"bx--form__helper-text\">\n              Add (English) to analyze tone for.\n            </div>\n             <div class=\"bx--text-area__wrapper\">\n              <textarea id=\"text-area\" class=\"bx--text-area bx--text-area--v2\" rows=\"4\" cols=\"50\"></textarea>\n            </div>\n          </div>\n        </div>\n        <div class=\"layout_3\">\n          <h3>Result</h3>\n          <pre id=\"result-container\" class=\"code_snippet\"></pre>\n        </div>\n\n    </div>\n\n    <script>\n      function displayResult(data) {\n        document.getElementById(\"result-container\").innerHTML = `${data}`;\n      }\n\n      function startAnalysis(data) {\n        return fetch(`/api/tone-analyzer`, {\n          method: \"POST\",\n          body: JSON.stringify({ text: data }),\n          headers: {\n            \"Content-Type\": \"application/json\"\n          }\n        })\n          .then(response => response.json())\n          .then(responseJson => {\n            displayResult(`<pre>${JSON.stringify(responseJson, null, 4)}</pre>`);\n          })\n          .catch(error => {\n            displayResult(\"Failed to analyze\");\n            console.error(\"Error:\", error);\n          });\n      }\n\n      // register click handlers\n      document.getElementById(\"button\").onclick = function() {\n        startAnalysis(document.getElementById(\"text-area\").value);\n      };\n    </script>\n  </body>\n</html>\n",
+        "output": "str",
+        "x": 413,
+        "y": 60,
+        "wires": [
+            [
+                "4084b448.f82b0c"
+            ]
+        ]
+    },
+    {
+        "id": "66e58867.c23498",
+        "type": "http in",
+        "z": "1bad8c04.b1d4c4",
+        "name": "",
+        "url": "/ui/tone-analyzer",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 136,
+        "y": 60,
+        "wires": [
+            [
+                "15f59b83.d172f4"
+            ]
+        ]
+    },
+    {
+        "id": "ec393f3e.65f15",
+        "type": "watson-translator",
+        "z": "88ed869a.ce4158",
+        "name": "",
+        "action": "translate",
+        "basemodel": "en-tr",
+        "domain": "general",
+        "srclang": "de",
+        "destlang": "en",
+        "password": "",
+        "apikey": "mysecret",
+        "custom": "",
+        "domainhidden": "general",
+        "srclanghidden": "de",
+        "destlanghidden": "en",
+        "basemodelhidden": "",
+        "customhidden": "",
+        "filetype": "forcedglossary",
+        "trainid": "",
+        "lgparams2": true,
+        "service-endpoint": "https://gateway-fra.watsonplatform.net/language-translator/api",
+        "x": 630,
+        "y": 120,
+        "wires": [
+            [
+                "dd9acdd0.cfd6f"
+            ]
+        ]
+    },
+    {
+        "id": "d3ac4eb3.0dcd2",
+        "type": "http in",
+        "z": "88ed869a.ce4158",
+        "name": "",
+        "url": "/api/translator",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 118.5,
+        "y": 121,
+        "wires": [
+            [
+                "4a4d52ec.662bdc"
+            ]
+        ]
+    },
+    {
+        "id": "4a4d52ec.662bdc",
+        "type": "function",
+        "z": "88ed869a.ce4158",
+        "name": "Prepare Request",
+        "func": "msg.payload = msg.req.body.text;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 393,
+        "y": 121,
+        "wires": [
+            [
+                "ec393f3e.65f15"
+            ]
+        ]
+    },
+    {
+        "id": "3fa383e1.68d48c",
+        "type": "http response",
+        "z": "88ed869a.ce4158",
+        "name": "Send Response",
+        "statusCode": "200",
+        "headers": {},
+        "x": 1048.5,
+        "y": 121,
+        "wires": []
+    },
+    {
+        "id": "52547f80.e9bac",
+        "type": "http response",
+        "z": "88ed869a.ce4158",
+        "name": "Send Response",
+        "statusCode": "",
+        "headers": {},
+        "x": 652.5,
+        "y": 55,
+        "wires": []
+    },
+    {
+        "id": "f8895d2b.04a5e",
+        "type": "template",
+        "z": "88ed869a.ce4158",
+        "name": "Prepare HTML Markup",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "html",
+        "syntax": "mustache",
+        "template": "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <title>Translator</title>\n    <link rel=\"stylesheet\" type=\"text/css\" href=\"https://unpkg.com/carbon-components/css/carbon-components.min.css\" />\n    <link rel=\"stylesheet\" type=\"text/css\" href=\"styles.css\">\n\n    <style type=\"text/css\">\n    </style>\n  </head>\n  <body>\n    <div id='header'>\n        <h1>Translator</h1>\n        <h3>Instructions</h3>\n        <ol class=\"bx--list--unordered\">\n            <li class=\"bx--list__item\">Copy or enter text to translate</li>\n            <li class=\"bx--list__item\">Click \"Translate text\"</li>\n        </ol>\n    </div>\n    <br></br>        \n      <button id=\"button\" class=\"bx--btn bx--btn--primary\" type=\"button\">\n        Translate text\n      </button>\n    <div class=\"flex\">\n      <div class=\"layout_3\">\n         <h3>Sample Text</h3>\n\n          <div class=\"bx--form-item\">\n            <label for=\"text-area\" class=\"bx--label\">Input Text</label>\n            <div class=\"bx--form__helper-text\">\n              Add text (German) to translate into English.\n            </div>\n            <div class=\"bx--text-area__wrapper\">\n              <textarea id=\"text-area\" class=\"bx--text-area bx--text-area--v2\" rows=\"4\" cols=\"50\"></textarea>\n            </div>\n          </div>\n      </div>\n      <div class=\"layout_3\">\n         <h3>Result</h3>\n         <div>\n             <pre id=\"result-container\" class=\"code_snippet\"></pre>\n         </div>\n      </div>\n    </div>\n\n    <script>\n      function displayResult(data) {\n        document.getElementById(\"result-container\").innerHTML = `${data}`;\n      }\n\n      function startAnalysis(data) {\n        return fetch(`/api/translator`, {\n          method: \"POST\",\n          body: JSON.stringify({ text: data }),\n          headers: {\n            \"Content-Type\": \"application/json\"\n          }\n        })\n          .then(response => response.json())\n          .then(responseJson => {\n            displayResult(`<pre>${JSON.stringify(responseJson, null, 4)}</pre>`);\n          })\n          .catch(error => {\n            displayResult(\"Failed to analyze\");\n            console.error(\"Error:\", error);\n          });\n      }\n\n      // register click handlers\n      document.getElementById(\"button\").onclick = function() {\n        startAnalysis(document.getElementById(\"text-area\").value);\n      };\n    </script>\n  </body>\n</html>\n",
+        "output": "str",
+        "x": 405.5,
+        "y": 55,
+        "wires": [
+            [
+                "52547f80.e9bac"
+            ]
+        ]
+    },
+    {
+        "id": "cd4532cf.63453",
+        "type": "http in",
+        "z": "88ed869a.ce4158",
+        "name": "",
+        "url": "/ui/translator",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 108.5,
+        "y": 55,
+        "wires": [
+            [
+                "f8895d2b.04a5e"
+            ]
+        ]
+    },
+    {
+        "id": "dd9acdd0.cfd6f",
+        "type": "function",
+        "z": "88ed869a.ce4158",
+        "name": "Prepare Response",
+        "func": "msg.payload = msg.translation;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 842.5,
+        "y": 121,
+        "wires": [
+            [
+                "3fa383e1.68d48c"
+            ]
+        ]
+    },
+    {
+        "id": "e57df21a.ef68e",
+        "type": "http in",
+        "z": "2215a883.0a9278",
+        "name": "",
+        "url": "/ui/styles.css",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 130,
+        "y": 80,
+        "wires": [
+            [
+                "9fab0fc8.24db5"
+            ]
+        ]
+    },
+    {
+        "id": "9fab0fc8.24db5",
+        "type": "template",
+        "z": "2215a883.0a9278",
+        "name": "",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "css",
+        "syntax": "mustache",
+        "template": "body {\n    margin: 2em;\n}\n\nh3 {\n    margin-top: 1em;\n}\n\n\n.flex {\n    display: flex;\n    flex-wrap: wrap;\n}\n\n.layout_3 {\n    width: 33%;\n}\n\n.code_snippet {\n    background-color: rgb(244, 244, 244);\n    width: 80%;\n    height: 300px;\n    overflow-y: scroll;\n    padding: 1em;\n    font-family: monospace;\n    font-size: 1.2em;\n}",
+        "output": "str",
+        "x": 320,
+        "y": 80,
+        "wires": [
+            [
+                "f5fcff9e.bfd82"
+            ]
+        ]
+    },
+    {
+        "id": "b58da0c.354f56",
+        "type": "http response",
+        "z": "2215a883.0a9278",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 630,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "f5fcff9e.bfd82",
+        "type": "function",
+        "z": "2215a883.0a9278",
+        "name": "text/css",
+        "func": "msg.headers = {\n    \"Content-Type\": \"text/css\"\n}\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 480,
+        "y": 80,
+        "wires": [
+            [
+                "b58da0c.354f56"
+            ]
+        ]
+    }
+]
